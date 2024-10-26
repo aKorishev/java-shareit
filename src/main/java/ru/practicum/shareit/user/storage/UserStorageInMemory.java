@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Component
-public class UserStorageInMemory implements UserStorage{
+public class UserStorageInMemory implements UserStorage {
     private final Map<Long, UserDto> users = new HashMap<>();
     private final Map<String, Long> emails = new HashMap<>();
 
