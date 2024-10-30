@@ -36,7 +36,7 @@ public class ItemService {
 
         itemStorage.updateItem(item, userId);
 
-        return itemStorage.getItem(item.getId()).get();
+        return itemStorage.getItem(item.id()).get();
     }
 
     public ItemDto updateItem(long itemId, ItemToUpdateDto item, long userId) {
@@ -49,9 +49,12 @@ public class ItemService {
 
         var build = oldItem.get().toBuilder();
 
-        item.getName().ifPresent(build::name);
-        item.getDescription().ifPresent(build::description);
-        item.getAvailable().ifPresent(build::available);
+        if (item.name() != null)
+            build.name(item.name());
+        if (item.description() != null)
+            build.description(item.description());
+        if (item.available() != null)
+            build.available(item.available());
 
         itemStorage.updateItem(build.build(), userId);
 

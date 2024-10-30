@@ -28,7 +28,7 @@ public class UserStorageInMemory implements UserStorage {
 
     @Override
     public long addUser(@Valid UserDto user) {
-        var email = user.getEmail();
+        var email = user.email();
 
         if (emails.containsKey(email))
             throw new IdIsAlreadyInUseException("Email уже используется");
@@ -50,7 +50,7 @@ public class UserStorageInMemory implements UserStorage {
 
     @Override
     public void updateUser(@Valid UserDto user) {
-        var userId = user.getId();
+        var userId = user.id();
 
         if (userId == null)
             throw new NotValidException("Полученный user содержит id = null");
@@ -58,7 +58,7 @@ public class UserStorageInMemory implements UserStorage {
         if (!users.containsKey(userId))
             throw new NotFoundException("Не нашел userId в коллекции");
 
-        var email = user.getEmail();
+        var email = user.email();
 
         if (emails.containsKey(email)) {
             if (!Objects.equals(emails.get(email), userId))
@@ -70,15 +70,11 @@ public class UserStorageInMemory implements UserStorage {
 
     @Override
     public Optional<UserDto> deleteUser(long userId) {
-        if (!users.containsKey(userId)) {
-            return Optional.empty();
-        }
-
-        var oldUser = users.get(userId);
+        var oldUser = users.remove(userId);
 
         users.remove(userId);
 
-        return Optional.of(oldUser);
+        return Optional.ofNullable(oldUser);
     }
 
     @Override

@@ -6,18 +6,18 @@ public class UserMapper {
     public UserEntity toEntity(UserDto user) {
         return UserEntity
                 .builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
+                .id(user.id())
+                .name(user.name())
+                .email(user.email())
                 .build();
     }
 
     public UserDto toApi(UserEntity userEntity) {
         return UserDto
                 .builder()
-                .id(userEntity.getId())
-                .name(userEntity.getName())
-                .email(userEntity.getEmail())
+                .id(userEntity.id())
+                .name(userEntity.name())
+                .email(userEntity.email())
                 .build();
     }
 }

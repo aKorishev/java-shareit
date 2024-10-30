@@ -37,8 +37,10 @@ public class UserService {
 
         var build = oldUser.get().toBuilder();
 
-        user.getName().ifPresent(build::name);
-        user.getEmail().ifPresent(build::email);
+        if (user.name() != null)
+            build.name(user.name());
+        if (user.email() != null)
+            build.email(user.email());
 
         updateUser(build.build());
     }

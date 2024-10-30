@@ -51,13 +51,13 @@ public class ItemStorageInMemory implements ItemStorage {
 
     @Override
     public void updateItem(ItemDto item, long userId) {
-        var itemId = item.getId();
+        var itemId = item.id();
 
         if (!items.containsKey(itemId)) {
             throw new NotFoundException("Вещь не найдена");
         }
 
-        var owner = items.get(itemId).getOwner();
+        var owner = items.get(itemId).owner();
 
         if (owner != userId) {
             throw new NotValidException("Редактировать вещь может только владелец");
@@ -75,7 +75,7 @@ public class ItemStorageInMemory implements ItemStorage {
         }
 
         var oldItem = items.get(itemId);
-        var owner = oldItem.getOwner();
+        var owner = oldItem.owner();
 
         if (owner != userId) {
             throw new NotValidException("Удалить вещь может только владелец");
@@ -105,8 +105,8 @@ public class ItemStorageInMemory implements ItemStorage {
 
         return items.values()
                 .stream()
-                .filter(i -> i.isAvailable() == available
-                            && (i.getName().toLowerCase().contains(searchText) || i.getDescription().toLowerCase().contains(searchText)))
+                .filter(i -> i.available() == available
+                            && (i.name().toLowerCase().contains(searchText) || i.description().toLowerCase().contains(searchText)))
                 .map(itemMapper::toDto)
                 .toList();
     }

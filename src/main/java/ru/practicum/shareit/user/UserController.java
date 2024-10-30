@@ -29,7 +29,7 @@ public class UserController {
     public UserDto putUser(@Valid @RequestBody UserDto user) {
         userService.updateUser(user);
 
-        return userService.getUser(user.getId());
+        return userService.getUser(user.id());
     }
 
     @PatchMapping("/{id}")
