@@ -1,12 +1,13 @@
-package ru.practicum.shareit.request.dto;
+package ru.practicum.shareit.booking;
 
 import lombok.Builder;
 import lombok.Value;
 
 @Value
 @Builder(toBuilder = true)
-public class ItemRequestDto {
+public class Review {
     Long id;
-    Long userId;
+    Long bookingId;
     String text;
+    boolean isSuccess;
 }
