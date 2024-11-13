@@ -12,9 +12,6 @@ logging.level:
   ru.practicum.shareit: TRACE
   org:
     zalando.logbook: TRACE
-    springframework:
-      transaction.interceptor: INFO
-      orm.jpa.JpaTransactionManager: INFO
     hibernate:
       type.descriptor.sql.BasicBinder: TRACE
       #orm.jdbc.bind: TRACE
