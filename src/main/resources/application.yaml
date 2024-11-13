@@ -1,9 +1,9 @@
 spring:
-  datasource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/shareit
-    username: dbuser
-    password: 12345
+#  datasource:
+#    driverClassName: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5432/shareit
+#    username: dbuser
+#    password: 12345
   jpa:
     hibernate.ddl-auto: none
     properties:
