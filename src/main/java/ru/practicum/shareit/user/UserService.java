@@ -5,54 +5,48 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserToUpdateDto;
-import ru.practicum.shareit.user.storage.UserStorage;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserStorage userStorage;
+    private final UserMapper userMapper = new UserMapper();
 
     public UserDto getUser(long userId) {
-        var user = userStorage.getUser(userId);
+        var userEntity = userStorage.getUser(userId)
+                .orElseThrow(() -> new NotFoundException("Не нашел userId в системе"));
 
-        if (user.isEmpty())
-            throw new NotFoundException("Не нашел userId в системе");
-
-        return user.get();
+        return userMapper.toDto(userEntity);
     }
 
-    public long createUser(UserDto user) {
-        return userStorage.addUser(user);
+    public UserDto updateUser(UserDto user) {
+        var userEntity = userMapper.toEntity(user);
+
+        userStorage.updateUser(userEntity);
+
+        return userMapper.toDto(userEntity);
     }
 
-    public void updateUser(UserDto user) {
-        userStorage.updateUser(user);
-    }
-
-    public void updateUser(long userId, UserToUpdateDto user) {
-        var oldUser = userStorage.getUser(userId);
-
-        if (oldUser.isEmpty())
-            throw new NotFoundException("Не нашел userId в системе");
-
-        var build = oldUser.get().toBuilder();
+    public UserDto updateUser(long userId, UserToUpdateDto user) {
+        var userEntity = userStorage.getUser(userId)
+                .orElseThrow(() -> new NotFoundException("Не нашел userId в системе"));
 
         if (user.name() != null)
-            build.name(user.name());
+            userEntity.setName(user.name());
         if (user.email() != null)
-            build.email(user.email());
+            userEntity.setEmail(user.email());
 
-        updateUser(build.build());
+        userStorage.updateUser(userEntity);
+
+        return userMapper.toDto(userEntity);
     }
 
     public UserDto deleteUser(long userId) {
-        var user = userStorage.getUser(userId);
+        var userEntity = userStorage.getUser(userId)
+                .orElseThrow(() -> new NotFoundException("Не нашел userId в системе"));
 
-        if (user.isEmpty())
-            throw new NotFoundException("Не нашел userId в системе");
+        userStorage.deleteUser(userEntity);
 
-        userStorage.deleteUser(userId);
-
-        return user.get();
+        return userMapper.toDto(userEntity);
     }
 }

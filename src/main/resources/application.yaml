@@ -1,0 +1,10 @@
+spring:    # не выводим баннерlogging.level:
+  datasource:
+    url: jdbc:h2:./db/shareit
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+    jpa.database-platform: org.hibernate.dialect.H2Dialect
+  sql.init:
+    mode: always
+    schema-locations: classpath:schema.sql

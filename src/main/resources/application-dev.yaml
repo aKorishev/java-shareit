@@ -2,6 +2,22 @@ spring:
   main:
     log-startup-info: true # выводим служебную информацию
     banner-mode: off       # не выводим баннерlogging.level:
+  datasource:
+    url: jdbc:h2:mem:shareit
+  jpa:
+    #show-sql: true
+    show-sql: false
+    properties:
+      hibernate:
+        jdbc.time_zone: UTC
+        format_sql: true
 logging.level:
-  ru.yandex.practicum.shareit: TRACE
-  org.zalando.logbook: TRACE
+  ru.practicum.shareit: TRACE
+  org:
+    zalando.logbook: TRACE
+    springframework:
+      transaction.interceptor: INFO
+      orm.jpa.JpaTransactionManager: INFO
+    hibernate:
+      type.descriptor.sql.BasicBinder: TRACE
+      #orm.jdbc.bind: TRACE
