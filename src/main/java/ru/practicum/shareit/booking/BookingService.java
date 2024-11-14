@@ -23,7 +23,7 @@ public class BookingService {
     private final BookingStorage bookingStorage;
     private final BookingMapper bookingMapper = new BookingMapper();
     private final UserMapper userMapper = new UserMapper();
-    private  final ItemMapper itemMapper = new ItemMapper();
+    private final ItemMapper itemMapper = new ItemMapper();
 
     public BookingDto getBooking(long bookingId, long userId) {
         var userEntity = userStorage.getUser(userId)

@@ -18,7 +18,7 @@ CREATE TABLE IF NOT exists Comments(
     user_id BIGINT REFERENCES Users(user_id),
     item_id BIGINT REFERENCES Items(item_id),
     text VARCHAR(1000) NOT NULL,
-    created timestamp without time zone not null
+    created timestamp WITHOUT TIME ZONE NOT NULL
 );
 
 CREATE TABLE IF NOT exists Bookings(
@@ -27,6 +27,6 @@ CREATE TABLE IF NOT exists Bookings(
     item_id BIGINT REFERENCES Items(item_id),
     status VARCHAR(100) NOT NULL,
     description VARCHAR(100),
-    start timestamp without time zone not null,
-    finish timestamp without time zone not null
+    start timestamp WITHOUT TIME ZONE NOT NULL,
+    finish timestamp WITHOUT TIME ZONE NOT NULL
 );
