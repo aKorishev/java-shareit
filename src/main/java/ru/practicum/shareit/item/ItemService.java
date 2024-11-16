@@ -1,90 +1,153 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.BookingStorage;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.exceptions.NotValidException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemToUpdateDto;
-import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.user.storage.UserStorage;
+import ru.practicum.shareit.item.storage.CommentMapper;
+import ru.practicum.shareit.user.UserStorage;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ItemService {
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
+    private final BookingStorage bookingStorage;
+    private final ItemMapper itemMapper = new ItemMapper();
+    private final CommentMapper commentMapper = new CommentMapper();
 
     public ItemDto getItem(long itemId) {
-        var item = itemStorage.getItem(itemId);
+        var itemEntity = itemStorage.getItem(itemId)
+                .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
 
-        if (item.isEmpty())
-            throw new NotFoundException("Вещь не найдена");
+        var comments = itemEntity.getComments()
+                .stream()
+                .map(commentMapper::toDto)
+                .toList();
 
-        return item.get();
+        return itemMapper.toDto(itemEntity, comments);
     }
 
-    public long createItem(ItemDto item, long userId) {
-        checkContainsUserId(userId);
+    public ItemDto createItem(ItemDto item, long userId) {
+        var userEntity = userStorage.getUser(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
-        return itemStorage.addItem(item, userId);
+        var itemEntity = itemMapper.toEntity(item, userEntity);
+
+        itemStorage.updateItem(itemEntity);
+
+        return itemMapper.toDto(itemEntity);
     }
 
     public ItemDto updateItem(ItemDto item, long userId) {
-        checkContainsUserId(userId);
+        var itemEntityOld = itemStorage.getItem(item.id())
+                .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
 
-        itemStorage.updateItem(item, userId);
+        var owner = itemEntityOld.getOwner();
 
-        return itemStorage.getItem(item.id()).get();
+        if (owner.getId() != userId) {
+            throw new NotFoundException("Вещь не доступна");
+        }
+
+        var itemEntity = itemMapper.toEntity(item, owner);
+
+        itemStorage.updateItem(itemEntity);
+
+        return itemMapper.toDto(itemEntity);
     }
 
     public ItemDto updateItem(long itemId, ItemToUpdateDto item, long userId) {
-        var oldItem = itemStorage.getItem(itemId);
+        var itemEntity = itemStorage.getItem(itemId)
+                .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
 
-        if (oldItem.isEmpty())
-            throw new NotFoundException("Не нашел предмет в системе");
+        var owner = itemEntity.getOwner();
 
-        checkContainsUserId(userId);
-
-        var build = oldItem.get().toBuilder();
+        if (owner.getId() != userId) {
+            throw new NotFoundException("Вещь не доступна");
+        }
 
         if (item.name() != null)
-            build.name(item.name());
+            itemEntity.setName(item.name());
         if (item.description() != null)
-            build.description(item.description());
+            itemEntity.setDescription(item.description());
         if (item.available() != null)
-            build.available(item.available());
+            itemEntity.setAvailable(item.available());
 
-        itemStorage.updateItem(build.build(), userId);
+        itemStorage.updateItem(itemEntity);
 
-        return itemStorage.getItem(itemId).get();
+        return itemMapper.toDto(itemEntity);
     }
 
     public ItemDto deleteItem(long itemId, long userId) {
-        var oldItem = itemStorage.deleteItem(itemId, userId);
+        var itemEntityOld = itemStorage.getItem(itemId)
+                .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
 
-        if (oldItem.isEmpty())
-            throw new NotFoundException("Вещь не найдена");
+        var owner = itemEntityOld.getOwner();
 
-        return oldItem.get();
+        if (owner.getId() != userId) {
+            throw new NotFoundException("Вещь не доступна");
+        }
+
+        itemStorage.deleteItem(itemId);
+
+        return itemMapper.toDto(itemEntityOld);
     }
 
     public List<ItemDto> getItems(long userId) {
-        checkContainsUserId(userId);
+        var userEntity = userStorage.getUser(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
-        return itemStorage.getItemsForOwner(userId);
+        var itemEntities = userEntity.getItems();
+
+        return itemEntities
+                .stream()
+                .map(itemMapper::toDto)
+                .toList();
     }
 
-    public List<ItemDto> findFreeItemsByText(String text) {
+    public List<ItemDto> findFreeItemsByText(String text, boolean available) {
         if (text == null || text.isEmpty())
             return List.of();
 
-        return itemStorage.findItemsByTextAndStatus(text, true);
+        var itemEntities = itemStorage.findItemsByTextAndStatus(text, true);
+
+        return itemEntities
+                .stream()
+                .map(itemMapper::toDto)
+                .toList();
     }
 
-    private void checkContainsUserId(long userId) {
-        if (!userStorage.containsUser(userId))
-            throw new NotFoundException("Пользователь не найден");
+    public CommentDto addComment(CommentDto commentDto, long itemId, long userId) {
+        log.trace(String.format("addComment: itemId = %d, userId = %d", itemId, userId));
+
+        var userEntity = userStorage.getUser(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+        var itemEntity = itemStorage.getItem(itemId)
+                .orElseThrow(() -> new NotFoundException("Вешь не найдена"));
+
+        log.trace(String.format("addComment: itemEntity = {%s}", itemEntity));
+
+        if (!bookingStorage.existsByBookerIdAndItemIdAndAfterEnd(userId, itemId)) {
+            throw new NotValidException("Пользователь не брал вещь, не может оставить комментарий");
+        }
+
+        var commentEntity = commentMapper.toEntity(commentDto, userEntity, itemEntity);
+
+        commentEntity.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+
+        itemStorage.updateComment(commentEntity);
+
+        return commentMapper.toDto(commentEntity);
     }
 }

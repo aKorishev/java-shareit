@@ -20,23 +20,17 @@ public class UserController {
 
     @PostMapping
     public UserDto postUser(@Valid @RequestBody UserDto user) {
-        var newUserId = userService.createUser(user);
-
-        return userService.getUser(newUserId);
+        return userService.updateUser(user);
     }
 
     @PutMapping
     public UserDto putUser(@Valid @RequestBody UserDto user) {
-        userService.updateUser(user);
-
-        return userService.getUser(user.id());
+        return userService.updateUser(user);
     }
 
     @PatchMapping("/{id}")
     public UserDto patchUser(@PathVariable long id, @RequestBody @Valid UserToUpdateDto user) {
-        userService.updateUser(id, user);
-
-        return userService.getUser(id);
+        return userService.updateUser(id, user);
     }
 
     @DeleteMapping("/{id}")

@@ -1,7 +1,17 @@
 spring:
   main:
     log-startup-info: true # выводим служебную информацию
-    banner-mode: off       # не выводим баннерlogging.level:
+    banner-mode: off       # не выводим баннер
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:shareit
+  jpa:
+    #show-sql: true
+    show-sql: false
 logging.level:
-  ru.yandex.practicum.shareit: TRACE
-  org.zalando.logbook: TRACE
+  ru.practicum.shareit: TRACE
+  org:
+    zalando.logbook: TRACE
+    hibernate:
+      type.descriptor.sql.BasicBinder: TRACE
+      #orm.jdbc.bind: TRACE
