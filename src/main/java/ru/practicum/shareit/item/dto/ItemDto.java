@@ -15,5 +15,6 @@ public record ItemDto(
     @NotNull Boolean available,
     Timestamp lastBooking,
     Timestamp nextBooking,
-    List<CommentDto> comments
+    List<CommentDto> comments,
+    Long requestId
 ) { }
