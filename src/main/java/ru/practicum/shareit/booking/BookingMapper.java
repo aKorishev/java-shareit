@@ -12,9 +12,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class BookingMapper {
-    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    public BookingDto toDto(BookingEntity entity, UserDto userDto, ItemDto itemDto) {
+    public static BookingDto toDto(BookingEntity entity, UserDto userDto, ItemDto itemDto) {
         return BookingDto
                 .builder()
                 .id(entity.getId())
@@ -27,7 +27,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public BookingEntity toEntity(BookingDto dto, UserEntity user, ItemEntity item) throws ParseException {
+    public static BookingEntity toEntity(BookingDto dto, UserEntity user, ItemEntity item) throws ParseException {
         var entity = new BookingEntity();
         entity.setId(dto.id());
         entity.setBooker(user);

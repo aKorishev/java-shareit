@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.storage.BookingRepository;
+import ru.practicum.shareit.item.CommentMapper;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemStorage;
 import ru.practicum.shareit.user.storage.UserRepository;

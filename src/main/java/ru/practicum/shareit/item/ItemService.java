@@ -9,7 +9,6 @@ import ru.practicum.shareit.exceptions.NotValidException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemToUpdateDto;
-import ru.practicum.shareit.item.storage.CommentMapper;
 import ru.practicum.shareit.user.UserStorage;
 
 import java.sql.Timestamp;
@@ -23,8 +22,6 @@ public class ItemService {
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
     private final BookingStorage bookingStorage;
-    private final ItemMapper itemMapper = new ItemMapper();
-    private final CommentMapper commentMapper = new CommentMapper();
 
     public ItemDto getItem(long itemId) {
         var itemEntity = itemStorage.getItem(itemId)
@@ -32,21 +29,21 @@ public class ItemService {
 
         var comments = itemEntity.getComments()
                 .stream()
-                .map(commentMapper::toDto)
+                .map(CommentMapper::toDto)
                 .toList();
 
-        return itemMapper.toDto(itemEntity, comments);
+        return ItemMapper.toDto(itemEntity, comments);
     }
 
     public ItemDto createItem(ItemDto item, long userId) {
         var userEntity = userStorage.getUser(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
-        var itemEntity = itemMapper.toEntity(item, userEntity);
+        var itemEntity = ItemMapper.toEntity(item, userEntity);
 
         itemStorage.updateItem(itemEntity);
 
-        return itemMapper.toDto(itemEntity);
+        return ItemMapper.toDto(itemEntity);
     }
 
     public ItemDto updateItem(ItemDto item, long userId) {
@@ -59,11 +56,11 @@ public class ItemService {
             throw new NotFoundException("Вещь не доступна");
         }
 
-        var itemEntity = itemMapper.toEntity(item, owner);
+        var itemEntity = ItemMapper.toEntity(item, owner);
 
         itemStorage.updateItem(itemEntity);
 
-        return itemMapper.toDto(itemEntity);
+        return ItemMapper.toDto(itemEntity);
     }
 
     public ItemDto updateItem(long itemId, ItemToUpdateDto item, long userId) {
@@ -85,7 +82,7 @@ public class ItemService {
 
         itemStorage.updateItem(itemEntity);
 
-        return itemMapper.toDto(itemEntity);
+        return ItemMapper.toDto(itemEntity);
     }
 
     public ItemDto deleteItem(long itemId, long userId) {
@@ -100,7 +97,7 @@ public class ItemService {
 
         itemStorage.deleteItem(itemId);
 
-        return itemMapper.toDto(itemEntityOld);
+        return ItemMapper.toDto(itemEntityOld);
     }
 
     public List<ItemDto> getItems(long userId) {
@@ -111,7 +108,7 @@ public class ItemService {
 
         return itemEntities
                 .stream()
-                .map(itemMapper::toDto)
+                .map(ItemMapper::toDto)
                 .toList();
     }
 
@@ -123,7 +120,7 @@ public class ItemService {
 
         return itemEntities
                 .stream()
-                .map(itemMapper::toDto)
+                .map(ItemMapper::toDto)
                 .toList();
     }
 
@@ -142,12 +139,12 @@ public class ItemService {
             throw new NotValidException("Пользователь не брал вещь, не может оставить комментарий");
         }
 
-        var commentEntity = commentMapper.toEntity(commentDto, userEntity, itemEntity);
+        var commentEntity = CommentMapper.toEntity(commentDto, userEntity, itemEntity);
 
         commentEntity.setCreated(Timestamp.valueOf(LocalDateTime.now()));
 
         itemStorage.updateComment(commentEntity);
 
-        return commentMapper.toDto(commentEntity);
+        return CommentMapper.toDto(commentEntity);
     }
 }

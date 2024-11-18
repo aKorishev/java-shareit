@@ -21,9 +21,6 @@ public class BookingService {
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
     private final BookingStorage bookingStorage;
-    private final BookingMapper bookingMapper = new BookingMapper();
-    private final UserMapper userMapper = new UserMapper();
-    private final ItemMapper itemMapper = new ItemMapper();
 
     public BookingDto getBooking(long bookingId, long userId) {
         var userEntity = userStorage.getUser(userId)
@@ -36,10 +33,10 @@ public class BookingService {
             throw new NotValidException("Данные о бронировании может получить заказчик или владелец");
         }
 
-        return bookingMapper.toDto(
+        return BookingMapper.toDto(
                 bookingEntity,
-                userMapper.toDto(userEntity),
-                itemMapper.toDto(bookingEntity.getItem()));
+                UserMapper.toDto(userEntity),
+                ItemMapper.toDto(bookingEntity.getItem()));
     }
 
     public List<BookingDto> getItemsForUserId(long userId) {
@@ -60,10 +57,10 @@ public class BookingService {
 
         return bookingEntities
                 .stream()
-                .map(i -> bookingMapper.toDto(
+                .map(i -> BookingMapper.toDto(
                         i,
-                        userMapper.toDto(userEntity),
-                        itemMapper.toDto(i.getItem())))
+                        UserMapper.toDto(userEntity),
+                        ItemMapper.toDto(i.getItem())))
                 .toList();
     }
 
@@ -86,10 +83,10 @@ public class BookingService {
 
         return bookingEntities
                 .stream()
-                .map(i -> bookingMapper.toDto(
+                .map(i -> BookingMapper.toDto(
                         i,
-                        userMapper.toDto(i.getBooker()),
-                        itemMapper.toDto(i.getItem())))
+                        UserMapper.toDto(i.getBooker()),
+                        ItemMapper.toDto(i.getItem())))
                 .toList();
     }
 
@@ -104,15 +101,15 @@ public class BookingService {
         }
 
         try {
-            var bookingEntity = bookingMapper.toEntity(bookingDto, userEntity, itemEntity);
+            var bookingEntity = BookingMapper.toEntity(bookingDto, userEntity, itemEntity);
             bookingEntity.setStatus(BookingStatus.WAITING);
 
             bookingStorage.updateBooking(bookingEntity);
 
-            return bookingMapper.toDto(
+            return BookingMapper.toDto(
                     bookingEntity,
-                    userMapper.toDto(userEntity),
-                    itemMapper.toDto(itemEntity));
+                    UserMapper.toDto(userEntity),
+                    ItemMapper.toDto(itemEntity));
         } catch (ParseException e) {
             throw new NotValidException("Произошла ошибка чтения данных");
         }
@@ -139,9 +136,9 @@ public class BookingService {
 
         bookingStorage.updateBooking(bookingEntity);
 
-        return bookingMapper.toDto(
+        return BookingMapper.toDto(
                 bookingEntity,
-                userMapper.toDto(bookingEntity.getBooker()),
-                itemMapper.toDto(itemEntity));
+                UserMapper.toDto(bookingEntity.getBooker()),
+                ItemMapper.toDto(itemEntity));
     }
 }

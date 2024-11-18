@@ -1,10 +1,12 @@
-package ru.practicum.shareit.item.storage;
+package ru.practicum.shareit.item;
 
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.storage.CommentEntity;
+import ru.practicum.shareit.item.storage.ItemEntity;
 import ru.practicum.shareit.user.storage.UserEntity;
 
 public class CommentMapper {
-    public CommentDto toDto(
+    public static CommentDto toDto(
             CommentEntity entity) {
         var build = CommentDto
                 .builder()
@@ -16,7 +18,7 @@ public class CommentMapper {
         return build.build();
     }
 
-    public CommentEntity toEntity(CommentDto dto, UserEntity userEntity, ItemEntity itemEntity) {
+    public static CommentEntity toEntity(CommentDto dto, UserEntity userEntity, ItemEntity itemEntity) {
         var entity = new CommentEntity();
         entity.setId(dto.id());
         entity.setText(dto.text());

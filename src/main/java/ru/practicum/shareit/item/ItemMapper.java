@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ItemMapper {
-    public ItemDto toDto(ItemWithDateOfBookings entity) {
+    public static ItemDto toDto(ItemWithDateOfBookings entity) {
         return toDto(
                 entity.getItemEntity(),
                 Optional.ofNullable(entity.getLastDateBooking()),
@@ -20,7 +20,7 @@ public class ItemMapper {
                 List.of());
     }
 
-    public ItemDto toDto(ItemWithDateOfBookings entity, List<CommentDto> comments) {
+    public static ItemDto toDto(ItemWithDateOfBookings entity, List<CommentDto> comments) {
         return toDto(
                 entity.getItemEntity(),
                 Optional.ofNullable(entity.getLastDateBooking()),
@@ -28,15 +28,15 @@ public class ItemMapper {
                 comments);
     }
 
-    public ItemDto toDto(ItemEntity itemEntity) {
+    public static ItemDto toDto(ItemEntity itemEntity) {
         return toDto(itemEntity, Optional.empty(),Optional.empty(), List.of());
     }
 
-    public ItemDto toDto(ItemEntity itemEntity, List<CommentDto> comments) {
+    public static ItemDto toDto(ItemEntity itemEntity, List<CommentDto> comments) {
         return toDto(itemEntity, Optional.empty(),Optional.empty(), comments);
     }
 
-    public ItemDto toDto(
+    public static ItemDto toDto(
             ItemEntity itemEntity,
             @NotNull Optional<Timestamp> lastBooking,
             @NotNull Optional<Timestamp> nextBooking,
@@ -55,7 +55,7 @@ public class ItemMapper {
         return build.build();
     }
 
-    public ItemEntity toEntity(ItemDto itemDto, UserEntity userEntity) {
+    public static ItemEntity toEntity(ItemDto itemDto, UserEntity userEntity) {
         var entity = new ItemEntity();
         entity.setId(itemDto.id());
         entity.setOwner(userEntity);

@@ -10,21 +10,20 @@ import ru.practicum.shareit.user.dto.UserToUpdateDto;
 @RequiredArgsConstructor
 public class UserService {
     private final UserStorage userStorage;
-    private final UserMapper userMapper = new UserMapper();
 
     public UserDto getUser(long userId) {
         var userEntity = userStorage.getUser(userId)
                 .orElseThrow(() -> new NotFoundException("Не нашел userId в системе"));
 
-        return userMapper.toDto(userEntity);
+        return UserMapper.toDto(userEntity);
     }
 
     public UserDto updateUser(UserDto user) {
-        var userEntity = userMapper.toEntity(user);
+        var userEntity = UserMapper.toEntity(user);
 
         userStorage.updateUser(userEntity);
 
-        return userMapper.toDto(userEntity);
+        return UserMapper.toDto(userEntity);
     }
 
     public UserDto updateUser(long userId, UserToUpdateDto user) {
@@ -38,7 +37,7 @@ public class UserService {
 
         userStorage.updateUser(userEntity);
 
-        return userMapper.toDto(userEntity);
+        return UserMapper.toDto(userEntity);
     }
 
     public UserDto deleteUser(long userId) {
@@ -47,6 +46,6 @@ public class UserService {
 
         userStorage.deleteUser(userEntity);
 
-        return userMapper.toDto(userEntity);
+        return UserMapper.toDto(userEntity);
     }
 }

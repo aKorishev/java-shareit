@@ -4,7 +4,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.storage.UserEntity;
 
 public class UserMapper {
-    public UserEntity toEntity(UserDto user) {
+    public static UserEntity toEntity(UserDto user) {
         var entity = new UserEntity();
         entity.setId(user.id());
         entity.setName(user.name());
@@ -13,7 +13,7 @@ public class UserMapper {
         return entity;
     }
 
-    public UserDto toDto(UserEntity userEntity) {
+    public static UserDto toDto(UserEntity userEntity) {
         return UserDto
                 .builder()
                 .id(userEntity.getId())
