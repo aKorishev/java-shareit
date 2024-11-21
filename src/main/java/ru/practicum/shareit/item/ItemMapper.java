@@ -5,6 +5,7 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.storage.ItemEntity;
 import ru.practicum.shareit.item.storage.ItemWithDateOfBookings;
+import ru.practicum.shareit.request.storage.RequestEntity;
 import ru.practicum.shareit.user.storage.UserEntity;
 
 import java.sql.Timestamp;
@@ -55,13 +56,14 @@ public class ItemMapper {
         return build.build();
     }
 
-    public static ItemEntity toEntity(ItemDto itemDto, UserEntity userEntity) {
+    public static ItemEntity toEntity(ItemDto itemDto, UserEntity userEntity, RequestEntity requestEntity) {
         var entity = new ItemEntity();
         entity.setId(itemDto.id());
         entity.setOwner(userEntity);
         entity.setName(itemDto.name());
         entity.setDescription(itemDto.description());
         entity.setAvailable(itemDto.available());
+        entity.setRequest(requestEntity);
 
         return entity;
     }

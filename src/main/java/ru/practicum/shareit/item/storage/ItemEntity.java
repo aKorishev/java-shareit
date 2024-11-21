@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.storage;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import ru.practicum.shareit.request.storage.RequestEntity;
 import ru.practicum.shareit.user.storage.UserEntity;
 
 import java.util.List;
@@ -28,6 +29,10 @@ public class ItemEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
     private List<CommentEntity> comments;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
+    private RequestEntity request;
 
     public ItemEntity() {
 

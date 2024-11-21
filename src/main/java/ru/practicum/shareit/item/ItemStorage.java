@@ -21,4 +21,5 @@ public interface ItemStorage {
 
     List<ItemEntity> findItemsByTextAndStatus(String text, boolean available);
 
+    List<ItemEntity> getAllItems();
 }

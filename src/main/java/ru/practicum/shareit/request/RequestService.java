@@ -4,11 +4,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.storage.RequestEntity;
 import ru.practicum.shareit.user.UserStorage;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ public class RequestService {
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
         var requestEntity = RequestMapper.toEntity(requestDto, userEntity);
+        requestEntity.setCreated(Timestamp.valueOf(LocalDateTime.now()));
 
         requestStorage.updateRequest(requestEntity);
 
@@ -45,11 +50,12 @@ public class RequestService {
     }
 
     private RequestDto mapToDto(RequestEntity requestEntity) {
-        var answers = requestEntity.getAnswers()
+        var items = Optional.ofNullable(requestEntity.getItems())
+                .orElse(List.of())
                 .stream()
-                .map(AnswerMapper::toDto)
+                .map(ItemMapper::toDto)
                 .toList();
 
-        return RequestMapper.toDto(requestEntity, answers);
+        return RequestMapper.toDto(requestEntity, items);
     }
 }

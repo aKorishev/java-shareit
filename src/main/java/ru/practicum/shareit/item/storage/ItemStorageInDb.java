@@ -71,4 +71,9 @@ public class ItemStorageInDb implements ItemStorage {
     public List<ItemEntity> findItemsByTextAndStatus(String text, boolean available) {
         return itemRepository.findByTextAndAvailable(text, available);
     }
+
+    @Override
+    public List<ItemEntity> getAllItems() {
+        return itemRepository.findAll();
+    }
 }

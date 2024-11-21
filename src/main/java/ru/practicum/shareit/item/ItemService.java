@@ -9,6 +9,8 @@ import ru.practicum.shareit.exceptions.NotValidException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemToUpdateDto;
+import ru.practicum.shareit.request.RequestStorage;
+import ru.practicum.shareit.request.storage.RequestEntity;
 import ru.practicum.shareit.user.UserStorage;
 
 import java.sql.Timestamp;
@@ -22,6 +24,7 @@ public class ItemService {
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
     private final BookingStorage bookingStorage;
+    private final RequestStorage requestStorage;
 
     public ItemDto getItem(long itemId) {
         var itemEntity = itemStorage.getItem(itemId)
@@ -39,7 +42,13 @@ public class ItemService {
         var userEntity = userStorage.getUser(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
-        var itemEntity = ItemMapper.toEntity(item, userEntity);
+        RequestEntity requestEntity = null;
+
+        if (item.requestId() != null)
+            requestEntity = requestStorage.findRequestById(item.requestId())
+                    .orElseThrow(() -> new NotFoundException("Запрос не найден"));
+
+        var itemEntity = ItemMapper.toEntity(item, userEntity, requestEntity);
 
         itemStorage.updateItem(itemEntity);
 
@@ -53,10 +62,16 @@ public class ItemService {
         var owner = itemEntityOld.getOwner();
 
         if (owner.getId() != userId) {
-            throw new NotFoundException("Вещь не доступна");
+            throw new NotFoundException("Владелец не найден");
         }
 
-        var itemEntity = ItemMapper.toEntity(item, owner);
+        RequestEntity requestEntity = null;
+
+        if (item.requestId() != null)
+            requestEntity = requestStorage.findRequestById(item.requestId())
+                    .orElseThrow(() -> new NotFoundException("Запрос не найден"));
+
+        var itemEntity = ItemMapper.toEntity(item, owner, requestEntity);
 
         itemStorage.updateItem(itemEntity);
 

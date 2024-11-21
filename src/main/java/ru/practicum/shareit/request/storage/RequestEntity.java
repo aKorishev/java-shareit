@@ -2,13 +2,14 @@ package ru.practicum.shareit.request.storage;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import ru.practicum.shareit.item.storage.ItemEntity;
 import ru.practicum.shareit.user.storage.UserEntity;
 
 import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
-@Table(name = "Request")
+@Table(name = "Requests")
 @Data
 public class RequestEntity {
     @Id
@@ -25,10 +26,10 @@ public class RequestEntity {
     @Column
     private String description;
     @Column
-    private Timestamp date;
+    private Timestamp created;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "request")
-    private List<AnswerEntity> answers;
+    private List<ItemEntity> items;
 
     public RequestEntity() {
 
