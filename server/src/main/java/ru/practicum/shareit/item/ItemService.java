@@ -131,7 +131,7 @@ public class ItemService {
         if (text == null || text.isEmpty())
             return List.of();
 
-        var itemEntities = itemStorage.findItemsByTextAndStatus(text, true);
+        var itemEntities = itemStorage.findItemsByTextAndStatus(text, available);
 
         return itemEntities
                 .stream()

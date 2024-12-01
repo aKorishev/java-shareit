@@ -39,11 +39,11 @@ public class BookingService {
                 ItemMapper.toDto(bookingEntity.getItem()));
     }
 
-    public List<BookingDto> getItemsForUserId(long userId) {
-        return getItemsForUserId(BookingStatusRequestDto.ALL, userId);
+    public List<BookingDto> getBookingForUserId(long userId) {
+        return getBookingForUserId(BookingStatusRequestDto.ALL, userId);
     }
 
-    public List<BookingDto> getItemsForUserId(BookingStatusRequestDto state, long userId) {
+    public List<BookingDto> getBookingForUserId(BookingStatusRequestDto state, long userId) {
         var userEntity = userStorage.getUser(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
@@ -64,11 +64,11 @@ public class BookingService {
                 .toList();
     }
 
-    public List<BookingDto> getItemsForItemOwnerId(long userId) {
-        return getItemsForItemOwnerId(BookingStatusRequestDto.ALL, userId);
+    public List<BookingDto> getBookingsForItemOwnerId(long userId) {
+        return getBookingsForItemOwnerId(BookingStatusRequestDto.ALL, userId);
     }
 
-    public List<BookingDto> getItemsForItemOwnerId(BookingStatusRequestDto state, long ownerId) {
+    public List<BookingDto> getBookingsForItemOwnerId(BookingStatusRequestDto state, long ownerId) {
         if (!userStorage.existsById(ownerId)) {
             throw new NotFoundException("Пользователь не найден");
         }

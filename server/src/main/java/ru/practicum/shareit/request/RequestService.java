@@ -20,7 +20,7 @@ public class RequestService {
     private final RequestStorage requestStorage;
     private final UserStorage userStorage;
 
-    public RequestDto createItem(@Valid RequestDto requestDto, long userId) {
+    public RequestDto createRequest(@Valid RequestDto requestDto, long userId) {
         var userEntity = userStorage.getUser(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 

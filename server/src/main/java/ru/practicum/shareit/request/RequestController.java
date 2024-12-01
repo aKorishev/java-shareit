@@ -32,6 +32,6 @@ public class RequestController {
     public RequestDto postRequestDto(
             @Valid @RequestBody RequestDto requestDto,
             @RequestHeader("X-Sharer-User-Id") long userId) {
-        return requestService.createItem(requestDto, userId);
+        return requestService.createRequest(requestDto, userId);
     }
 }

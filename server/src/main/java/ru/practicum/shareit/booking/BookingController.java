@@ -14,33 +14,33 @@ public class BookingController {
     private final BookingService bookingService;
 
     @GetMapping("/{id}")
-    public BookingDto getItem(
+    public BookingDto getBooking(
             @PathVariable long id,
             @RequestHeader("X-Sharer-User-Id") long userId) {
         return bookingService.getBooking(id, userId);
     }
 
     @GetMapping
-    public List<BookingDto> getItemsForUserId(
+    public List<BookingDto> getBookingForUserId(
             @RequestHeader("X-Sharer-User-Id") long userId) {
-        return bookingService.getItemsForUserId(userId);
+        return bookingService.getBookingForUserId(userId);
     }
 
     @GetMapping("/owner")
-    public List<BookingDto> getItemsForItemOwnerId(
+    public List<BookingDto> getBookingForItemOwnerId(
             @RequestHeader("X-Sharer-User-Id") long ownerId) {
-        return bookingService.getItemsForItemOwnerId(ownerId);
+        return bookingService.getBookingsForItemOwnerId(ownerId);
     }
 
     @PostMapping
-    public BookingDto postItem(
+    public BookingDto postBooking(
             @RequestHeader("X-Sharer-User-Id") long userId,
             @Valid @RequestBody BookingDto bookingDto) {
         return bookingService.createBooking(bookingDto, userId);
     }
 
     @PatchMapping("/{id}")
-    public BookingDto patchItem(
+    public BookingDto patchBooking(
             @PathVariable long id,
             @RequestParam(name = "approved") boolean approved,
             @RequestHeader("X-Sharer-User-Id") long userId) {
