@@ -10,11 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemToUpdateDto;
-import ru.practicum.shareit.request.RequestController;
-import ru.practicum.shareit.request.RequestService;
 import ru.practicum.shareit.request.dto.RequestDto;
 
 import java.nio.charset.StandardCharsets;

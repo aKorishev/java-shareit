@@ -10,8 +10,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemToUpdateDto;
 import ru.practicum.shareit.rest.RestQueryBuilder;
 
-import java.util.List;
-
 
 @RestController
 @RequestMapping("/items")

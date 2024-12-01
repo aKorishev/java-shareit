@@ -1,6 +1,5 @@
 package ru.practicum.shareit.rest;
 
-import lombok.Value;
 import org.springframework.http.HttpMethod;
 
 import java.util.Optional;

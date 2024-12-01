@@ -29,9 +29,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
 @SpringBootTest
 public class BookingServiceTest {
     @Mock
