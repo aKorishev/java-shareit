@@ -20,7 +20,7 @@ public class BookingStorageInDb implements BookingStorage {
     private final BookingRepository bookingRepository;
 
     @Override
-    public Optional<BookingEntity> getBooking(long bookingId) {
+    public Optional<BookingEntity> findBooking(long bookingId) {
         return bookingRepository.findById(bookingId);
     }
 

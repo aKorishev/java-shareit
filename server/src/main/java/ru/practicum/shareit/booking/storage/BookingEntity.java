@@ -2,8 +2,12 @@ package ru.practicum.shareit.booking.storage;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.storage.ItemEntity;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.storage.UserEntity;
 
 import java.sql.Timestamp;
@@ -41,5 +45,12 @@ public class BookingEntity {
     @Override
     public String toString() {
         return String.format("id=%d,booker=%d,item=%d,status=%s,start=%s,end=%s", id, booker.getId(), item.getId(), status, start.toString(), end.toString());
+    }
+
+    public BookingDto toDto() {
+        return BookingMapper.toDto(
+                this,
+                UserMapper.toDto(getBooker()),
+                ItemMapper.toDto(getItem()));
     }
 }

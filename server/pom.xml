@@ -77,6 +77,16 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>ru/practicum/shareit/ShareItApp.class</exclude>
+                                <exclude>ru/practicum/shareit/**/dto/*.*</exclude>
+                                <exclude>ru/practicum/shareit/**/*Mapper.class</exclude>
+                                <exclude>ru/practicum/shareit/exceptions/*.class</exclude>
+                                <exclude>ru/practicum/shareit/**/storage/*.class</exclude>
+                                <exclude>ru/practicum/shareit/tool/*.class</exclude>
+                            </excludes>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

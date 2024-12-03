@@ -17,19 +17,19 @@ public class BookingController {
     public BookingDto getBooking(
             @PathVariable long id,
             @RequestHeader("X-Sharer-User-Id") long userId) {
-        return bookingService.getBooking(id, userId);
+        return bookingService.findBooking(id, userId);
     }
 
     @GetMapping
     public List<BookingDto> getBookingForUserId(
             @RequestHeader("X-Sharer-User-Id") long userId) {
-        return bookingService.getBookingForUserId(userId);
+        return bookingService.findBookingsForUserId(userId);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getBookingForItemOwnerId(
             @RequestHeader("X-Sharer-User-Id") long ownerId) {
-        return bookingService.getBookingsForItemOwnerId(ownerId);
+        return bookingService.findBookingsForItemOwnerId(ownerId);
     }
 
     @PostMapping

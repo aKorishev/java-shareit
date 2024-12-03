@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookingStorage {
-    Optional<BookingEntity> getBooking(long bookingId);
+    Optional<BookingEntity> findBooking(long bookingId);
 
     boolean userIdIsBookerOrOwner(BookingEntity bookingEntity, long userId);
 

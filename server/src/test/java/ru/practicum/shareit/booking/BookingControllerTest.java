@@ -10,9 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ru.practicum.shareit.booking.BookingController;
-import ru.practicum.shareit.booking.BookingService;
-import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
 
 import java.nio.charset.StandardCharsets;
@@ -70,7 +67,7 @@ public class BookingControllerTest {
                 .id(10L)
                 .build();
 
-        Mockito.when(bookingService.getBooking(Mockito.anyLong(), Mockito.anyLong()))
+        Mockito.when(bookingService.findBooking(Mockito.anyLong(), Mockito.anyLong()))
                 .thenReturn(dto);
 
         mockMvc.perform(get("/bookings/1")
@@ -90,7 +87,7 @@ public class BookingControllerTest {
                 .andExpect(status().isOk());
 
         Mockito.verify(bookingService, Mockito.times(1))
-                .getBooking(100, 10);
+                .findBooking(100, 10);
     }
 
     @Test
@@ -104,7 +101,7 @@ public class BookingControllerTest {
                 BookingDto.builder().id(2L).build(),
                 BookingDto.builder().id(3L).build());
 
-        Mockito.when(bookingService.getBookingForUserId(Mockito.anyLong()))
+        Mockito.when(bookingService.findBookingsForUserId(Mockito.anyLong()))
                         .thenReturn(expectedResult);
 
         mockMvc.perform(get("/bookings")
@@ -126,7 +123,7 @@ public class BookingControllerTest {
                 .andExpect(status().isOk());
 
         Mockito.verify(bookingService, Mockito.times(1))
-                .getBookingForUserId(10);
+                .findBookingsForUserId(10);
     }
 
     @Test
@@ -140,7 +137,7 @@ public class BookingControllerTest {
                 BookingDto.builder().id(2L).build(),
                 BookingDto.builder().id(3L).build());
 
-        Mockito.when(bookingService.getBookingsForItemOwnerId(Mockito.anyLong()))
+        Mockito.when(bookingService.findBookingsForItemOwnerId(Mockito.anyLong()))
                 .thenReturn(expectedResult);
 
         mockMvc.perform(get("/bookings/owner")
@@ -162,7 +159,7 @@ public class BookingControllerTest {
                 .andExpect(status().isOk());
 
         Mockito.verify(bookingService, Mockito.times(1))
-                .getBookingsForItemOwnerId(10);
+                .findBookingsForItemOwnerId(10);
     }
 
     @Test

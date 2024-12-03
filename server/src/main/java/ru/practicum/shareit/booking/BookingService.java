@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingStatusRequestDto;
 import ru.practicum.shareit.booking.storage.BookingEntity;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.NotValidException;
@@ -22,71 +21,41 @@ public class BookingService {
     private final UserStorage userStorage;
     private final BookingStorage bookingStorage;
 
-    public BookingDto getBooking(long bookingId, long userId) {
+    public BookingDto findBooking(long bookingId, long userId) {
         var userEntity = userStorage.getUser(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
-        var bookingEntity = bookingStorage.getBooking(bookingId)
+        var bookingEntity = bookingStorage.findBooking(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронь не найдена"));
 
         if (!bookingStorage.userIdIsBookerOrOwner(bookingEntity, userId)) {
             throw new NotValidException("Данные о бронировании может получить заказчик или владелец");
         }
 
-        return BookingMapper.toDto(
-                bookingEntity,
-                UserMapper.toDto(userEntity),
-                ItemMapper.toDto(bookingEntity.getItem()));
+        return bookingEntity.toDto();
     }
 
-    public List<BookingDto> getBookingForUserId(long userId) {
-        return getBookingForUserId(BookingStatusRequestDto.ALL, userId);
-    }
+    public List<BookingDto> findBookingsForUserId(long userId) {
+        if (userStorage.getUser(userId).isEmpty())
+            throw  new NotFoundException("Пользователь не найден");
 
-    public List<BookingDto> getBookingForUserId(BookingStatusRequestDto state, long userId) {
-        var userEntity = userStorage.getUser(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        var entities = bookingStorage.findBookingsByBookerId(userId);
 
-        List<BookingEntity> bookingEntities = switch (state) {
-            case ALL, CURRENT, PAST, FUTURE -> bookingStorage.findBookingsByBookerId(userId);
-            case WAITING ->  bookingStorage.findBookingsByBookerId(userId, BookingStatus.WAITING);
-            case REJECTED ->  bookingStorage.findBookingsByBookerId(userId, BookingStatus.REJECTED);
-            case APPROVED ->  bookingStorage.findBookingsByBookerId(userId, BookingStatus.APPROVED);
-            default -> List.of();
-        };
-
-        return bookingEntities
+        return entities
                 .stream()
-                .map(i -> BookingMapper.toDto(
-                        i,
-                        UserMapper.toDto(userEntity),
-                        ItemMapper.toDto(i.getItem())))
+                .map(BookingEntity::toDto)
                 .toList();
     }
 
-    public List<BookingDto> getBookingsForItemOwnerId(long userId) {
-        return getBookingsForItemOwnerId(BookingStatusRequestDto.ALL, userId);
-    }
+    public List<BookingDto> findBookingsForItemOwnerId(long userId) {
+        if (userStorage.getUser(userId).isEmpty())
+            throw  new NotFoundException("Пользователь не найден");
 
-    public List<BookingDto> getBookingsForItemOwnerId(BookingStatusRequestDto state, long ownerId) {
-        if (!userStorage.existsById(ownerId)) {
-            throw new NotFoundException("Пользователь не найден");
-        }
+        var entities = bookingStorage.findBookingsByOwnerId(userId);
 
-        List<BookingEntity> bookingEntities = switch (state) {
-            case ALL, CURRENT, PAST, FUTURE -> bookingStorage.findBookingsByOwnerId(ownerId);
-            case WAITING ->  bookingStorage.findBookingsByOwnerId(ownerId, BookingStatus.WAITING);
-            case REJECTED ->  bookingStorage.findBookingsByOwnerId(ownerId, BookingStatus.REJECTED);
-            case APPROVED ->  bookingStorage.findBookingsByOwnerId(ownerId, BookingStatus.APPROVED);
-            default -> List.of();
-        };
-
-        return bookingEntities
+        return entities
                 .stream()
-                .map(i -> BookingMapper.toDto(
-                        i,
-                        UserMapper.toDto(i.getBooker()),
-                        ItemMapper.toDto(i.getItem())))
+                .map(BookingEntity::toDto)
                 .toList();
     }
 
@@ -106,10 +75,7 @@ public class BookingService {
 
             bookingStorage.updateBooking(bookingEntity);
 
-            return BookingMapper.toDto(
-                    bookingEntity,
-                    UserMapper.toDto(userEntity),
-                    ItemMapper.toDto(itemEntity));
+            return bookingEntity.toDto();
         } catch (ParseException e) {
             throw new NotValidException("Произошла ошибка чтения данных");
         }
@@ -120,7 +86,7 @@ public class BookingService {
             throw new NotValidException("Пользователь не найден");
         }
 
-        var bookingEntity = bookingStorage.getBooking(id)
+        var bookingEntity = bookingStorage.findBooking(id)
                 .orElseThrow(() -> new NotFoundException("Бронь не найдена"));
 
         var itemEntity = bookingEntity.getItem();
