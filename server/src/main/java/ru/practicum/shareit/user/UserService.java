@@ -11,8 +11,8 @@ import ru.practicum.shareit.user.dto.UserToUpdateDto;
 public class UserService {
     private final UserStorage userStorage;
 
-    public UserDto getUser(long userId) {
-        var userEntity = userStorage.getUser(userId)
+    public UserDto findUserId(long userId) {
+        var userEntity = userStorage.findUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Не нашел userId в системе"));
 
         return UserMapper.toDto(userEntity);
@@ -27,7 +27,7 @@ public class UserService {
     }
 
     public UserDto updateUser(long userId, UserToUpdateDto user) {
-        var userEntity = userStorage.getUser(userId)
+        var userEntity = userStorage.findUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Не нашел userId в системе"));
 
         if (user.name() != null)
@@ -41,7 +41,7 @@ public class UserService {
     }
 
     public UserDto deleteUser(long userId) {
-        var userEntity = userStorage.getUser(userId)
+        var userEntity = userStorage.findUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Не нашел userId в системе"));
 
         userStorage.deleteUser(userEntity);

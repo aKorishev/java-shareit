@@ -5,7 +5,7 @@ import ru.practicum.shareit.user.storage.UserEntity;
 import java.util.Optional;
 
 public interface UserStorage {
-    Optional<UserEntity> getUser(long userId);
+    Optional<UserEntity> findUserId(long userId);
 
     void updateUser(UserEntity user);
 

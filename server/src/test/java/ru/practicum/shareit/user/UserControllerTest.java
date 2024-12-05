@@ -40,7 +40,7 @@ public class UserControllerTest {
                 .email("email@mail.ru")
                 .build();
 
-        Mockito.when(userService.getUser(Mockito.anyLong()))
+        Mockito.when(userService.findUserId(Mockito.anyLong()))
                 .thenReturn(dto);
 
         mockMvc.perform(get("/users/17"))
@@ -48,7 +48,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id", is(47L), Long.class));
 
         Mockito.verify(userService, Mockito.times(1))
-                .getUser(17L);
+                .findUserId(17L);
     }
 
     @Test

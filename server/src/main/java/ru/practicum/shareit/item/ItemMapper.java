@@ -50,6 +50,10 @@ public class ItemMapper {
                 .available(itemEntity.isAvailable())
                 .comments(comments);
 
+        var request = itemEntity.getRequest();
+        if (request != null)
+            build.requestId(request.getId());
+
         lastBooking.ifPresent(build::lastBooking);
         nextBooking.ifPresent(build::nextBooking);
 

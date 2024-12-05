@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemStorage {
-    Optional<ItemEntity> getItem(long itemId);
+    Optional<ItemEntity> findItem(long itemId);
 
     void updateItem(ItemEntity itemEntity);
 

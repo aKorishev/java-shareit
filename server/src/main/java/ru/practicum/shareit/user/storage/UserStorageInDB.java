@@ -18,7 +18,7 @@ public class UserStorageInDB implements UserStorage {
     private final UserMapper userMapper = new UserMapper();
 
     @Override
-    public Optional<UserEntity> getUser(long userId) {
+    public Optional<UserEntity> findUserId(long userId) {
         return userRepository.findById(userId);
     }
 

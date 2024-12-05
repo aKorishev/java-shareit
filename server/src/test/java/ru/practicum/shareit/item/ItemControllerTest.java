@@ -69,7 +69,7 @@ public class ItemControllerTest {
                 .id(10L)
                 .build();
 
-        Mockito.when(itemService.getItem(Mockito.anyLong()))
+        Mockito.when(itemService.findItem(Mockito.anyLong()))
                 .thenReturn(dto);
 
         mockMvc.perform(get("/items/1"))
@@ -87,7 +87,7 @@ public class ItemControllerTest {
                 .andExpect(status().isOk());
 
         Mockito.verify(itemService, Mockito.times(1))
-                .getItem(100);
+                .findItem(100);
     }
 
     @Test

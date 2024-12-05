@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.storage.RequestEntity;
 import ru.practicum.shareit.user.UserStorage;
@@ -12,7 +11,6 @@ import ru.practicum.shareit.user.UserStorage;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +19,7 @@ public class RequestService {
     private final UserStorage userStorage;
 
     public RequestDto createRequest(@Valid RequestDto requestDto, long userId) {
-        var userEntity = userStorage.getUser(userId)
+        var userEntity = userStorage.findUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
         var requestEntity = RequestMapper.toEntity(requestDto, userEntity);
@@ -29,7 +27,7 @@ public class RequestService {
 
         requestStorage.updateRequest(requestEntity);
 
-        return mapToDto(requestEntity);
+        return requestEntity.toDto();
     }
 
     public List<RequestDto> getRequestsByUserId(long userId, boolean findByUserId) {
@@ -38,7 +36,7 @@ public class RequestService {
 
         return requestStorage.getRequestsByUserId(userId, findByUserId)
                 .stream()
-                .map(this::mapToDto)
+                .map(RequestEntity::toDto)
                 .toList();
     }
 
@@ -46,16 +44,6 @@ public class RequestService {
         var requestEntity = requestStorage.findRequestById(id)
                 .orElseThrow(() -> new NotFoundException("Запрос не найден"));
 
-        return mapToDto(requestEntity);
-    }
-
-    private RequestDto mapToDto(RequestEntity requestEntity) {
-        var items = Optional.ofNullable(requestEntity.getItems())
-                .orElse(List.of())
-                .stream()
-                .map(ItemMapper::toDto)
-                .toList();
-
-        return RequestMapper.toDto(requestEntity, items);
+        return requestEntity.toDto();
     }
 }

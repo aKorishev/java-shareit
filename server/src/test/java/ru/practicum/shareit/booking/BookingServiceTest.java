@@ -38,7 +38,7 @@ public class BookingServiceTest {
 
     @Test
     public void findBookingWhileNotFoundUser() {
-        Mockito.when(userStorage.getUser(Mockito.anyLong()))
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.empty());
 
         try {
@@ -53,7 +53,7 @@ public class BookingServiceTest {
 
     @Test
     public void findBookingWhileNotFoundBookingId() {
-        Mockito.when(userStorage.getUser(Mockito.anyLong()))
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.of(new UserEntity()));
 
         Mockito.when(bookingStorage.findBooking(Mockito.anyLong()))
@@ -71,7 +71,7 @@ public class BookingServiceTest {
 
     @Test
     public void findBookingWhileUserIsNotCreatorOrOwner() {
-        Mockito.when(userStorage.getUser(Mockito.anyLong()))
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.of(new UserEntity()));
 
         Mockito.when(bookingStorage.findBooking(Mockito.anyLong()))
@@ -93,7 +93,7 @@ public class BookingServiceTest {
     @Test
     public void findBooking() {
         var userEntity = new UserEntity(); userEntity.setId(1L);
-        Mockito.when(userStorage.getUser(Mockito.anyLong()))
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.of(userEntity));
 
         var itemEntity = new ItemEntity(); itemEntity.setId(2L);
@@ -122,7 +122,7 @@ public class BookingServiceTest {
 
     @Test
     public void findBookingsForUserIdWhileNotFoundUserId() {
-        Mockito.when(userStorage.getUser(Mockito.anyLong()))
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.empty());
 
         try {
@@ -168,7 +168,7 @@ public class BookingServiceTest {
                 expectedBookingEntity3
         );
 
-        Mockito.when(userStorage.getUser(Mockito.anyLong()))
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.of(userEntity));
 
         Mockito.when(bookingStorage.findBookingsByBookerId(Mockito.anyLong()))
@@ -182,7 +182,7 @@ public class BookingServiceTest {
 
     @Test
     public void findBookingsForOwnerIdWhileNotFoundUserId() {
-        Mockito.when(userStorage.getUser(Mockito.anyLong()))
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.empty());
 
         try {
@@ -228,7 +228,7 @@ public class BookingServiceTest {
                 expectedBookingEntity3
         );
 
-        Mockito.when(userStorage.getUser(Mockito.anyLong()))
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.of(userEntity));
 
         Mockito.when(bookingStorage.findBookingsByOwnerId(Mockito.anyLong()))
@@ -245,7 +245,7 @@ public class BookingServiceTest {
 
     @Test
     public void createBookingWhileNotFoundUserId() {
-        Mockito.when(userStorage.getUser(Mockito.anyLong()))
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.empty());
 
         try {
@@ -260,9 +260,9 @@ public class BookingServiceTest {
 
     @Test
     public void createBookingWhileNotFoundItemId() {
-        Mockito.when(userStorage.getUser(Mockito.anyLong()))
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.of(new UserEntity()));
-        Mockito.when(itemStorage.getItem(Mockito.anyLong()))
+        Mockito.when(itemStorage.findItem(Mockito.anyLong()))
                 .thenReturn(Optional.empty());
 
         var dto = BookingDto
@@ -285,9 +285,9 @@ public class BookingServiceTest {
         var itemEntity = new ItemEntity();
         itemEntity.setAvailable(false);
 
-        Mockito.when(userStorage.getUser(Mockito.anyLong()))
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.of(new UserEntity()));
-        Mockito.when(itemStorage.getItem(Mockito.anyLong()))
+        Mockito.when(itemStorage.findItem(Mockito.anyLong()))
                 .thenReturn(Optional.of(itemEntity));
 
         var dto = BookingDto
@@ -332,9 +332,9 @@ public class BookingServiceTest {
 
         var expectedBookingDto = expectedBookingEntity.toDto();
 
-        Mockito.when(userStorage.getUser(Mockito.anyLong()))
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.of(userEntity));
-        Mockito.when(itemStorage.getItem(Mockito.anyLong()))
+        Mockito.when(itemStorage.findItem(Mockito.anyLong()))
                 .thenReturn(Optional.of(itemEntity));
 
         var actualBooking = bookingService.createBooking(bookingDto, 7L);
@@ -343,5 +343,151 @@ public class BookingServiceTest {
 
         Mockito.verify(bookingStorage, Mockito.times(1))
                 .updateBooking(expectedBookingEntity);
+    }
+
+    @Test
+    public void setBookingStatusWhileNotFoundUserId() {
+        Mockito.when(userStorage.existsById(Mockito.anyLong()))
+                .thenReturn(false);
+
+        try {
+            bookingService.setBookingStatus(1L, true, 1L);
+        } catch (NotValidException ex) {
+            Assertions.assertEquals("Пользователь не найден", ex.getMessage());
+            return;
+        }
+
+        Assertions.fail("Expected NotValidException(\"Пользователь не найден\")");
+    }
+
+    @Test
+    public void setBookingStatusWhileNotFoundBookingId() {
+        Mockito.when(userStorage.existsById(Mockito.anyLong()))
+                .thenReturn(true);
+        Mockito.when(bookingStorage.findBooking(Mockito.anyLong()))
+                .thenReturn(Optional.empty());
+
+        try {
+            bookingService.setBookingStatus(1L, true, 1L);
+        } catch (NotFoundException ex) {
+            Assertions.assertEquals("Бронь не найдена", ex.getMessage());
+            return;
+        }
+
+        Assertions.fail("Expected NotFoundException(\"Бронь не найдена\"\")");
+    }
+
+    @Test
+    public void setBookingStatusWhileUserIdIsNotOwner() {
+        var ownerEntity = new UserEntity();
+        ownerEntity.setId(4L);
+
+        var bookerEntity = new UserEntity();
+        bookerEntity.setId(7L);
+
+        var itemEntity = new ItemEntity();
+        itemEntity.setAvailable(true);
+        itemEntity.setId(3L);
+        itemEntity.setOwner(ownerEntity);
+
+        var bookingEntity = new BookingEntity();
+        bookingEntity.setId(5L);
+        bookingEntity.setBooker(bookerEntity);
+        bookingEntity.setItem(itemEntity);
+        bookingEntity.setStart(Timestamp.valueOf(LocalDateTime.of(2024,12,03,0,0)));
+        bookingEntity.setEnd(Timestamp.valueOf(LocalDateTime.of(2024,12,04,0,0)));
+        bookingEntity.setStatus(BookingStatus.WAITING);
+
+        Mockito.when(userStorage.existsById(Mockito.anyLong()))
+                .thenReturn(true);
+        Mockito.when(bookingStorage.findBooking(Mockito.anyLong()))
+                .thenReturn(Optional.of(bookingEntity));
+
+        try {
+            bookingService.setBookingStatus(1L, true, 1L);
+        } catch (NotValidException ex) {
+            Assertions.assertEquals("Подтвердить бронь может только владелец", ex.getMessage());
+            return;
+        }
+
+        Assertions.fail("Expected NotValidException(\"Подтвердить бронь может только владелец\")");
+    }
+
+    @Test
+    public void setBookingStatusApprovedTest() {
+        var ownerEntity = new UserEntity();
+        ownerEntity.setId(4L);
+
+        var bookerEntity = new UserEntity();
+        bookerEntity.setId(7L);
+
+        var itemEntity = new ItemEntity();
+        itemEntity.setAvailable(true);
+        itemEntity.setId(3L);
+        itemEntity.setOwner(ownerEntity);
+
+        var bookingEntity = new BookingEntity();
+        bookingEntity.setId(5L);
+        bookingEntity.setBooker(bookerEntity);
+        bookingEntity.setItem(itemEntity);
+        bookingEntity.setStart(Timestamp.valueOf(LocalDateTime.of(2024,12,03,0,0)));
+        bookingEntity.setEnd(Timestamp.valueOf(LocalDateTime.of(2024,12,04,0,0)));
+        bookingEntity.setStatus(BookingStatus.WAITING);
+
+        Mockito.when(userStorage.existsById(Mockito.anyLong()))
+                .thenReturn(true);
+        Mockito.when(bookingStorage.findBooking(Mockito.anyLong()))
+                .thenReturn(Optional.of(bookingEntity));
+
+        var expectedBookingDto = bookingEntity.toDto()
+                .toBuilder()
+                .status(BookingStatus.APPROVED)
+                .build();
+
+        var actualBooking = bookingService.setBookingStatus(1L, true, 4L);
+
+        Assertions.assertEquals(expectedBookingDto, actualBooking);
+
+        Mockito.verify(bookingStorage, Mockito.times(1))
+                .updateBooking(bookingEntity);
+    }
+
+    @Test
+    public void setBookingStatusRejectTest() {
+        var ownerEntity = new UserEntity();
+        ownerEntity.setId(4L);
+
+        var bookerEntity = new UserEntity();
+        bookerEntity.setId(7L);
+
+        var itemEntity = new ItemEntity();
+        itemEntity.setAvailable(true);
+        itemEntity.setId(3L);
+        itemEntity.setOwner(ownerEntity);
+
+        var bookingEntity = new BookingEntity();
+        bookingEntity.setId(5L);
+        bookingEntity.setBooker(bookerEntity);
+        bookingEntity.setItem(itemEntity);
+        bookingEntity.setStart(Timestamp.valueOf(LocalDateTime.of(2024,12,03,0,0)));
+        bookingEntity.setEnd(Timestamp.valueOf(LocalDateTime.of(2024,12,04,0,0)));
+        bookingEntity.setStatus(BookingStatus.WAITING);
+
+        Mockito.when(userStorage.existsById(Mockito.anyLong()))
+                .thenReturn(true);
+        Mockito.when(bookingStorage.findBooking(Mockito.anyLong()))
+                .thenReturn(Optional.of(bookingEntity));
+
+        var expectedBookingDto = bookingEntity.toDto()
+                .toBuilder()
+                .status(BookingStatus.REJECTED)
+                .build();
+
+        var actualBooking = bookingService.setBookingStatus(1L, false, 4L);
+
+        Assertions.assertEquals(expectedBookingDto, actualBooking);
+
+        Mockito.verify(bookingStorage, Mockito.times(1))
+                .updateBooking(bookingEntity);
     }
 }

@@ -22,7 +22,7 @@ public class BookingService {
     private final BookingStorage bookingStorage;
 
     public BookingDto findBooking(long bookingId, long userId) {
-        var userEntity = userStorage.getUser(userId)
+        var userEntity = userStorage.findUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
         var bookingEntity = bookingStorage.findBooking(bookingId)
@@ -36,7 +36,7 @@ public class BookingService {
     }
 
     public List<BookingDto> findBookingsForUserId(long userId) {
-        if (userStorage.getUser(userId).isEmpty())
+        if (userStorage.findUserId(userId).isEmpty())
             throw  new NotFoundException("Пользователь не найден");
 
         var entities = bookingStorage.findBookingsByBookerId(userId);
@@ -48,7 +48,7 @@ public class BookingService {
     }
 
     public List<BookingDto> findBookingsForItemOwnerId(long userId) {
-        if (userStorage.getUser(userId).isEmpty())
+        if (userStorage.findUserId(userId).isEmpty())
             throw  new NotFoundException("Пользователь не найден");
 
         var entities = bookingStorage.findBookingsByOwnerId(userId);
@@ -60,9 +60,9 @@ public class BookingService {
     }
 
     public BookingDto createBooking(BookingDto bookingDto, long userId) {
-        var userEntity = userStorage.getUser(userId)
+        var userEntity = userStorage.findUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        var itemEntity = itemStorage.getItem(bookingDto.itemId())
+        var itemEntity = itemStorage.findItem(bookingDto.itemId())
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
 
         if (!itemEntity.isAvailable()) {

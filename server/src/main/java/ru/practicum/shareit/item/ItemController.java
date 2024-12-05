@@ -23,7 +23,7 @@ public class ItemController {
 
     @GetMapping("/{id}")
     public ItemDto getItem(@PathVariable long id) {
-        return itemService.getItem(id);
+        return itemService.findItem(id);
     }
 
     @GetMapping("/search")

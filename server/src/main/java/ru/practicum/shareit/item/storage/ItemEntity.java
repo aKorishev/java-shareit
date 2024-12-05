@@ -2,6 +2,9 @@ package ru.practicum.shareit.item.storage;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import ru.practicum.shareit.item.CommentMapper;
+import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.storage.RequestEntity;
 import ru.practicum.shareit.user.storage.UserEntity;
 
@@ -41,5 +44,19 @@ public class ItemEntity {
     @Override
     public String toString() {
         return String.format("id=%d,owner=%d,name=%s,desc=%s,available=%b", id, owner.getId(), name, description, available);
+    }
+
+    public ItemDto toDto() {
+        var comments = getComments();
+
+        if (comments == null)
+            return ItemMapper.toDto(this, List.of());
+
+        var commentDtos = comments
+                .stream()
+                .map(CommentMapper::toDto)
+                .toList();
+
+        return ItemMapper.toDto(this, commentDtos);
     }
 }

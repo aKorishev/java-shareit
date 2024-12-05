@@ -26,7 +26,7 @@ public class ItemStorageInDb implements ItemStorage {
     private final CommentMapper commentMapper = new CommentMapper();
 
     @Override
-    public Optional<ItemEntity> getItem(long itemId) {
+    public Optional<ItemEntity> findItem(long itemId) {
         return itemRepository.findById(itemId);
     }
 
