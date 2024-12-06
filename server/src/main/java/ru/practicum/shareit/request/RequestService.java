@@ -30,17 +30,21 @@ public class RequestService {
         return requestEntity.toDto();
     }
 
-    public List<RequestDto> getRequestsByUserId(long userId, boolean findByUserId) {
-        if (findByUserId && !userStorage.existsById(userId))
+    public List<RequestDto> findRequestsByUserId(long userId, boolean findByEqualUserId) {
+        if (findByEqualUserId && !userStorage.existsById(userId))
             throw new NotFoundException("Пользователь не найден");
 
-        return requestStorage.getRequestsByUserId(userId, findByUserId)
+        var requests = findByEqualUserId
+                ? requestStorage.findRequestsByUserId(userId)
+                : requestStorage.findRequestsByNotUserId(userId);
+
+        return requests
                 .stream()
                 .map(RequestEntity::toDto)
                 .toList();
     }
 
-    public RequestDto getRequestById(long id) {
+    public RequestDto findRequestById(long id) {
         var requestEntity = requestStorage.findRequestById(id)
                 .orElseThrow(() -> new NotFoundException("Запрос не найден"));
 

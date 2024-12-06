@@ -8,8 +8,6 @@ import java.util.Optional;
 public interface BookingStorage {
     Optional<BookingEntity> findBooking(long bookingId);
 
-    boolean userIdIsBookerOrOwner(BookingEntity bookingEntity, long userId);
-
     void updateBooking(BookingEntity entity);
 
     List<BookingEntity> findBookingsByBookerId(long userId);

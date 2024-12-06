@@ -13,9 +13,9 @@ public interface ItemStorage {
 
     void updateComment(CommentEntity commentEntity);
 
-    Optional<ItemEntity> deleteItem(long itemId);
+    void deleteItem(long itemId);
 
-    Optional<CommentEntity> deleteComment(long commentId);
+    void deleteComment(long commentId);
 
     List<ItemEntity> getItemsForOwner(long userId);
 

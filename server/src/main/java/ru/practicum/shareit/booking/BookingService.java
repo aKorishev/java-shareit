@@ -28,9 +28,9 @@ public class BookingService {
         var bookingEntity = bookingStorage.findBooking(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронь не найдена"));
 
-        if (!bookingStorage.userIdIsBookerOrOwner(bookingEntity, userId)) {
+        if (bookingEntity.getBooker().getId() != userId &&
+                bookingEntity.getItem().getOwner().getId() != userId)
             throw new NotValidException("Данные о бронировании может получить заказчик или владелец");
-        }
 
         return bookingEntity.toDto();
     }

@@ -4,11 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.booking.storage.BookingRepository;
-import ru.practicum.shareit.item.CommentMapper;
-import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemStorage;
-import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,12 +14,8 @@ import java.util.Optional;
 @Qualifier("ItemStorageInDb")
 @Primary
 public class ItemStorageInDb implements ItemStorage {
-    private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-    private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
-    private final ItemMapper itemMapper = new ItemMapper();
-    private final CommentMapper commentMapper = new CommentMapper();
 
     @Override
     public Optional<ItemEntity> findItem(long itemId) {
@@ -41,25 +33,13 @@ public class ItemStorageInDb implements ItemStorage {
     }
 
     @Override
-    public Optional<ItemEntity> deleteItem(long itemId) {
-        var entity = itemRepository.findById(itemId);
-
-        if (entity.isPresent()) {
-            itemRepository.deleteById(itemId);
-        }
-
-        return entity;
+    public void deleteItem(long itemId) {
+        itemRepository.deleteById(itemId);
     }
 
     @Override
-    public Optional<CommentEntity> deleteComment(long commentId) {
-        var entity = commentRepository.findById(commentId);
-
-        if (entity.isPresent()) {
-            commentRepository.deleteById(commentId);
-        }
-
-        return entity;
+    public void deleteComment(long commentId) {
+        commentRepository.deleteById(commentId);
     }
 
     @Override

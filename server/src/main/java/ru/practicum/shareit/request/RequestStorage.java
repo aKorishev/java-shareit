@@ -8,7 +8,9 @@ import java.util.Optional;
 public interface RequestStorage {
     void updateRequest(RequestEntity requestEntity);
 
-    List<RequestEntity> getRequestsByUserId(long userId, boolean findByUserId);
+    List<RequestEntity> findRequestsByUserId(long userId);
+
+    List<RequestEntity> findRequestsByNotUserId(long userId);
 
     Optional<RequestEntity> findRequestById(long id);
 }

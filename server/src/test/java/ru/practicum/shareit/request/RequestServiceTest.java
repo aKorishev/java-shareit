@@ -84,12 +84,12 @@ public class RequestServiceTest {
     }
 
     @Test
-    public void getRequestsByUserIdWhileNotFoundUserTest() {
+    public void findRequestsByUserIdWhileNotFoundUserTest() {
         Mockito.when(userStorage.existsById(Mockito.anyLong()))
                 .thenReturn(false);
 
         try {
-            requestService.getRequestsByUserId(1L, true);
+            requestService.findRequestsByUserId(1L, true);
         } catch (NotFoundException ex) {
             Assertions.assertEquals("Пользователь не найден", ex.getMessage());
             return;
@@ -99,7 +99,7 @@ public class RequestServiceTest {
     }
 
     @Test
-    public void getRequestsByUserIdTest() {
+    public void findRequestsByUserIdTest() {
         Mockito.when(userStorage.existsById(Mockito.anyLong()))
                 .thenReturn(true);
 
@@ -114,10 +114,10 @@ public class RequestServiceTest {
                 .map(i -> RequestMapper.toEntity(i, userEntity))
                 .toList();
 
-        Mockito.when(requestStorage.getRequestsByUserId(Mockito.anyLong(), Mockito.anyBoolean()))
+        Mockito.when(requestStorage.findRequestsByUserId(Mockito.anyLong()))
                 .thenReturn(requestEntities);
 
-        var actualRequestDtos = requestService.getRequestsByUserId(11L, true);
+        var actualRequestDtos = requestService.findRequestsByUserId(11L, true);
 
         var expectedRequestDtos = requestEntities.stream().map(RequestEntity::toDto).toList();
 
@@ -127,11 +127,14 @@ public class RequestServiceTest {
                 .existsById(11L);
 
         Mockito.verify(requestStorage, Mockito.times(1))
-                .getRequestsByUserId(11L, true);
+                .findRequestsByUserId(11L);
+
+        Mockito.verify(requestStorage, Mockito.never())
+                .findRequestsByNotUserId(Mockito.anyLong());
     }
 
     @Test
-    public void getRequestsByUserIdWhileParamIsFalseTest() {
+    public void findRequestsByUserIdWhileParamIsFalseTest() {
         Mockito.when(userStorage.existsById(Mockito.anyLong()))
                 .thenReturn(true);
 
@@ -146,17 +149,23 @@ public class RequestServiceTest {
                 .map(i -> RequestMapper.toEntity(i, userEntity))
                 .toList();
 
-        Mockito.when(requestStorage.getRequestsByUserId(Mockito.anyLong(), Mockito.anyBoolean()))
+        Mockito.when(requestStorage.findRequestsByNotUserId(Mockito.anyLong()))
                 .thenReturn(requestEntities);
 
-        var actualRequestDtos = requestService.getRequestsByUserId(13L, false);
+        var actualRequestDtos = requestService.findRequestsByUserId(13L, false);
 
         var expectedRequestDtos = requestEntities.stream().map(RequestEntity::toDto).toList();
 
         Assertions.assertEquals(expectedRequestDtos, actualRequestDtos);
 
+        Mockito.verify(userStorage, Mockito.never())
+                .existsById(Mockito.anyLong());
+
+        Mockito.verify(requestStorage, Mockito.never())
+                .findRequestsByUserId(Mockito.anyLong());
+
         Mockito.verify(requestStorage, Mockito.times(1))
-                .getRequestsByUserId(13L, false);
+                .findRequestsByNotUserId(13L);
     }
 
     @Test
@@ -165,7 +174,7 @@ public class RequestServiceTest {
                 .thenReturn(Optional.empty());
 
         try {
-            requestService.getRequestById(1L);
+            requestService.findRequestById(1L);
         } catch (NotFoundException ex) {
             Assertions.assertEquals("Запрос не найден", ex.getMessage());
             return;
@@ -175,14 +184,14 @@ public class RequestServiceTest {
     }
 
     @Test
-    public void getRequestByIdTest() {
+    public void findRequestByIdTest() {
         var requestEntity = new RequestEntity();
         requestEntity.setId(15L);
 
         Mockito.when(requestStorage.findRequestById(Mockito.anyLong()))
                 .thenReturn(Optional.of(requestEntity));
 
-        var actualRequestDto = requestService.getRequestById(11L);
+        var actualRequestDto = requestService.findRequestById(11L);
 
         var expectedRequestDto = requestEntity.toDto();
 

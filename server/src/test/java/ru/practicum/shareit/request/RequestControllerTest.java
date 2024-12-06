@@ -67,7 +67,7 @@ public class RequestControllerTest {
                 RequestDto.builder().id(37L).build()
         );
 
-        Mockito.when(requestService.getRequestsByUserId(Mockito.anyLong(), Mockito.anyBoolean()))
+        Mockito.when(requestService.findRequestsByUserId(Mockito.anyLong(), Mockito.anyBoolean()))
                 .thenReturn(expectedRequests);
 
         mockMvc.perform(get("/requests")
@@ -78,7 +78,7 @@ public class RequestControllerTest {
                 .andExpect(jsonPath("$[2].id", is(37L), Long.class));
 
         Mockito.verify(requestService, Mockito.times(1))
-                .getRequestsByUserId(7L, true);
+                .findRequestsByUserId(7L, true);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class RequestControllerTest {
 
         var expectedResult = RequestDto.builder().id(13L).build();
 
-        Mockito.when(requestService.getRequestById(Mockito.anyLong()))
+        Mockito.when(requestService.findRequestById(Mockito.anyLong()))
                         .thenReturn(expectedResult);
 
         mockMvc.perform(get("/requests/23"))
@@ -97,7 +97,7 @@ public class RequestControllerTest {
                 .andExpect(jsonPath("$.id",is(13L), Long.class));
 
         Mockito.verify(requestService, Mockito.times(1))
-                .getRequestById(23L);
+                .findRequestById(23L);
     }
 
     @Test
@@ -112,7 +112,7 @@ public class RequestControllerTest {
                 RequestDto.builder().id(37L).build()
         );
 
-        Mockito.when(requestService.getRequestsByUserId(Mockito.anyLong(), Mockito.anyBoolean()))
+        Mockito.when(requestService.findRequestsByUserId(Mockito.anyLong(), Mockito.anyBoolean()))
                 .thenReturn(expectedRequests);
 
         mockMvc.perform(get("/requests/all")
@@ -123,7 +123,7 @@ public class RequestControllerTest {
                 .andExpect(jsonPath("$[2].id", is(37L), Long.class));
 
         Mockito.verify(requestService, Mockito.times(1))
-                .getRequestsByUserId(7L, false);
+                .findRequestsByUserId(7L, false);
     }
 
     @Test

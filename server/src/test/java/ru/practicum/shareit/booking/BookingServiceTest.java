@@ -70,15 +70,26 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void findBookingWhileUserIsNotCreatorOrOwner() {
+    public void findBookingWhileUserIsNotCreatorAndOwner() {
+        var ownerEntity = new UserEntity();
+        ownerEntity.setId(1L);
         Mockito.when(userStorage.findUserId(Mockito.anyLong()))
-                .thenReturn(Optional.of(new UserEntity()));
+                .thenReturn(Optional.of(ownerEntity));
+
+        var itemEntity = new ItemEntity();
+        itemEntity.setId(2L);
+        itemEntity.setOwner(ownerEntity);
+
+        var bookerEntity = new UserEntity();
+        bookerEntity.setId(4L);
+
+        var bookingEntity = new BookingEntity();
+        bookingEntity.setId(3L);
+        bookingEntity.setItem(itemEntity);
+        bookingEntity.setBooker(bookerEntity);
 
         Mockito.when(bookingStorage.findBooking(Mockito.anyLong()))
-                .thenReturn(Optional.of(new BookingEntity()));
-
-        Mockito.when(bookingStorage.userIdIsBookerOrOwner(Mockito.any(BookingEntity.class), Mockito.anyLong()))
-                .thenReturn(false);
+                .thenReturn(Optional.of(bookingEntity));
 
         try {
             bookingService.findBooking(10L, 10L);
@@ -91,28 +102,85 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void findBooking() {
-        var userEntity = new UserEntity(); userEntity.setId(1L);
+    public void findBookingWhileUserIsNotCreator() {
+        var userEntity = new UserEntity();
+        userEntity.setId(1L);
         Mockito.when(userStorage.findUserId(Mockito.anyLong()))
                 .thenReturn(Optional.of(userEntity));
 
-        var itemEntity = new ItemEntity(); itemEntity.setId(2L);
+        var itemEntity = new ItemEntity();
+        itemEntity.setId(2L);
+        itemEntity.setOwner(userEntity);
+
+        var bookerEntity = new UserEntity();
+        bookerEntity.setId(4L);
 
         var bookingEntity = new BookingEntity();
         bookingEntity.setId(3L);
         bookingEntity.setItem(itemEntity);
-        bookingEntity.setBooker(userEntity);
+        bookingEntity.setBooker(bookerEntity);
         bookingEntity.setStart(Timestamp.from(Instant.now()));
         bookingEntity.setEnd(Timestamp.from(Instant.now()));
 
         Mockito.when(bookingStorage.findBooking(Mockito.anyLong()))
                 .thenReturn(Optional.of(bookingEntity));
 
-        Mockito.when(bookingStorage.userIdIsBookerOrOwner(Mockito.any(BookingEntity.class), Mockito.anyLong()))
-                .thenReturn(true);
+        bookingService.findBooking(10L, 1L);
+    }
+
+    @Test
+    public void findBookingWhileUserIsNotItemOwner() {
+        var userEntity = new UserEntity();
+        userEntity.setId(1L);
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
+                .thenReturn(Optional.of(userEntity));
+
+        var itemEntity = new ItemEntity();
+        itemEntity.setId(2L);
+        itemEntity.setOwner(userEntity);
+
+        var bookerEntity = new UserEntity();
+        bookerEntity.setId(4L);
+
+        var bookingEntity = new BookingEntity();
+        bookingEntity.setId(3L);
+        bookingEntity.setItem(itemEntity);
+        bookingEntity.setBooker(bookerEntity);
+        bookingEntity.setStart(Timestamp.from(Instant.now()));
+        bookingEntity.setEnd(Timestamp.from(Instant.now()));
+
+        Mockito.when(bookingStorage.findBooking(Mockito.anyLong()))
+                .thenReturn(Optional.of(bookingEntity));
+
+        bookingService.findBooking(10L, 4L);
+    }
+
+    @Test
+    public void findBooking() {
+        var userEntity = new UserEntity();
+        userEntity.setId(1L);
+        Mockito.when(userStorage.findUserId(Mockito.anyLong()))
+                .thenReturn(Optional.of(userEntity));
+
+        var itemEntity = new ItemEntity();
+        itemEntity.setId(2L);
+        itemEntity.setOwner(userEntity);
+
+        var bookerEntity = new UserEntity();
+        bookerEntity.setId(4L);
+
+        var bookingEntity = new BookingEntity();
+        bookingEntity.setId(3L);
+        bookingEntity.setItem(itemEntity);
+        bookingEntity.setBooker(bookerEntity);
+        bookingEntity.setStart(Timestamp.from(Instant.now()));
+        bookingEntity.setEnd(Timestamp.from(Instant.now()));
+
+        Mockito.when(bookingStorage.findBooking(Mockito.anyLong()))
+                .thenReturn(Optional.of(bookingEntity));
 
         var expectedBookingDto = bookingEntity.toDto();
-        var actualBookingDto = bookingService.findBooking(13L, 14L);
+        var actualBookingDto = bookingService.findBooking(13L, 1L);
 
         Assertions.assertEquals(expectedBookingDto, actualBookingDto);
 

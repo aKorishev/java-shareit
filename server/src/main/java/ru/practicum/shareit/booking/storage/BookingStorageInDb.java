@@ -25,17 +25,6 @@ public class BookingStorageInDb implements BookingStorage {
     }
 
     @Override
-    public boolean userIdIsBookerOrOwner(BookingEntity bookingEntity, long userId) {
-        if (bookingEntity.getBooker().getId() == userId)
-            return true;
-
-        if (bookingEntity.getItem().getOwner().getId() == userId)
-            return true;
-
-        return false;
-    }
-
-    @Override
     public void updateBooking(BookingEntity bookingEntity) {
         bookingRepository.saveAndFlush(bookingEntity);
     }

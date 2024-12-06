@@ -20,12 +20,13 @@ public class RequestStorageInDb implements RequestStorage {
     }
 
     @Override
-    public List<RequestEntity> getRequestsByUserId(long userId, boolean findByUserId) {
-        if (findByUserId) {
-            return requestRepository.findByUserId(userId);
-        } else {
-            return requestRepository.findByUserIdNot(userId);
-        }
+    public List<RequestEntity> findRequestsByUserId(long userId) {
+        return requestRepository.findByUserId(userId);
+    }
+
+    @Override
+    public List<RequestEntity> findRequestsByNotUserId(long userId) {
+        return requestRepository.findByUserIdNot(userId);
     }
 
     @Override
